@@ -1,0 +1,79 @@
+# 🔄 Palindrome Number
+
+## 📝 Problem Statement
+Given an integer `x`, return `true` if `x` is a **palindrome**, otherwise return `false`.
+
+A palindrome number reads the same backward as forward.  
+Examples:  
+- 121 → palindrome  
+- 123 → not palindrome  
+
+---
+
+## 📌 Examples
+
+### Example 1
+**Input:**  
+x = 121  
+**Output:**  
+true
+
+### Example 2
+**Input:**  
+x = -121  
+**Output:**  
+false  
+(Negative numbers cannot be palindromes.)
+
+### Example 3
+**Input:**  
+x = 10  
+**Output:**  
+false  
+(Reverse is 01 ≠ 10)
+
+---
+
+## 💡 Approach (Reverse the Integer)
+
+1. Store the original number in `y`.  
+2. Reverse the number by extracting digits:
+   - `last = x % 10`
+   - `reverse = reverse * 10 + last`
+   - `x = x / 10`
+3. If the reversed number equals the original → `true`.  
+4. Negative numbers automatically return `false`.
+
+---
+
+## ⏱ Time Complexity
+**O(log₁₀(N))**  
+Because the number of digits is proportional to log₁₀(N).
+
+## 💾 Space Complexity
+**O(1)**  
+No extra space is used.
+
+---
+
+## 🧑‍💻 Java Code
+
+```java
+class Solution {
+    public boolean isPalindrome(int x) {
+
+        int reverse = 0;
+        int y = x;
+
+        // Negative numbers are not palindromes
+        if (x < 0) return false;
+
+        while (x > 0) {
+            int last = x % 10;
+            reverse = (reverse * 10) + last;
+            x = x / 10;
+        }
+
+        return reverse == y;
+    }
+}

@@ -1,0 +1,69 @@
+# Tribonacci Number - Dynamic Programming | LeetCode 1137
+
+## 📋 Problem Statement
+The Tribonacci sequence `T_n` is defined as:
+- T₀ = 0, T₁ = 1, T₂ = 1
+- Tₙ = Tₙ₋₁ + Tₙ₋₂ + Tₙ₋₃ for n ≥ 3
+
+Given `n`, return the value of Tₙ.
+
+## 🚀 Live Example
+**Input:** `n = 4`  
+**Output:** `4`  
+**Explanation:**  
+T₃ = T₂ + T₁ + T₀ = 1 + 1 + 0 = 2  
+T₄ = T₃ + T₂ + T₁ = 2 + 1 + 1 = 4
+
+## 🧮 Complexity Analysis
+
+### **Time Complexity:** `O(n)`
+- **Reason:** Single loop running from 3 to n
+- **Operations:** n-2 additions
+
+### **Space Complexity:** `O(n)`
+- **DP Array:** n+1 size array
+- **Optimization Possible:** O(1) with 3 variables
+
+## 🎯 Approach: Dynamic Programming (Tabulation)
+
+### **Core Idea**
+Build solution bottom-up using previously computed values:
+1. Handle base cases (n = 0, 1, 2)
+2. Create DP array to store computed values
+3. Fill array using recurrence relation
+4. Return dp[n]
+
+## 📝 Java Implementation
+
+```java
+class Solution {
+    /**
+     * Calculate Tribonacci number using DP
+     * @param n The index of Tribonacci number to calculate
+     * @return T_n (n-th Tribonacci number)
+     */
+    public int tribonacci(int n) {
+        // Handle base cases
+        if (n == 0 || n == 1) {
+            return n;
+        }
+        if (n == 2) {
+            return 1;
+        }
+        
+        // Create DP array
+        int[] dp = new int[n + 1];
+        
+        // Initialize base values
+        dp[0] = 0;
+        dp[1] = 1;
+        dp[2] = 1;
+        
+        // Fill DP array using recurrence relation
+        for (int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3];
+        }
+        
+        return dp[n];
+    }
+}

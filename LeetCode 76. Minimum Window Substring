@@ -1,0 +1,116 @@
+## 📝 Problem Statement:
+
+Given two strings s and t of lengths m and n respectively, return the minimum window substring of s such that every character in t (including duplicates) is included in the window.
+If there is no such substring, return the empty string "".
+The testcases will be generated such that the answer is unique.
+
+## 📌 Example
+**Input:** 
+s = "ADOBECODEBANC", t = "ABC"
+**Output:**  
+"BANC"
+
+**Explanation:** 
+The minimum window substring "BANC" includes 'A', 'B', and 'C' from string t.
+---
+
+## 💡 Approach:
+1. Frequency Map for t
+
+     - Use mapT to store how many times each character appears in t.
+
+     - re (required elements) = number of unique characters in t.
+
+2. Sliding Window on s
+
+     - Use two pointers: left and right.
+
+     - mapS keeps track of character frequencies in the current window.
+
+     - cr (current satisfied requirements) tracks how many characters meet the required frequency.
+
+3. Expand Window (right)
+
+     - Add s[right] to mapS.
+
+     - If its frequency matches mapT, increment cr.
+
+4. Contract Window (left)
+
+     - When cr == re, the window is valid.
+
+     - Try shrinking from the left to minimize the window.
+
+     - Update the best answer if the current window is smaller.
+
+     - If shrinking breaks a requirement, decrement cr.
+
+5. Final Answer
+
+     - If no valid window is found, return ""
+
+     - Otherwise, return the smallest substring stored.
+
+Complexity---------
+## ⏱ Time Complexity
+
+O(|s| + |t|)
+
+     - Each character in s is processed at most twice (once by right, once by left)
+
+     - Building the frequency map for t takes O(|t|)
+
+## 💾 Space Complexity
+
+O(|s| + |t|) (effectively O(1) since characters are limited)
+
+     - Two hash maps store character counts
+
+     - Space depends on the number of unique characters
+---
+
+## 🧑‍💻 Java Code
+
+```java
+class Solution {
+    public String minWindow(String s, String t) {
+        if (s.length() == 0 || t.length() == 0 || s.length() < t.length()) {
+            return "";
+        }
+        HashMap<Character, Integer> mapT = new HashMap<>();
+        for (int i = 0; i < t.length(); i++) {
+            mapT.put(t.charAt(i), mapT.getOrDefault(t.charAt(i), 0) + 1);
+        }
+        int re = mapT.size();
+        int cr = 0;
+        HashMap<Character, Integer> mapS = new HashMap<>();
+        int left = 0, right = 0;
+        int[] ans = { -1, 0, 0 };
+        while (right < s.length()) {
+            char c = s.charAt(right);
+            int count = mapS.getOrDefault(c, 0);
+            mapS.put(c, count + 1);
+            if (mapT.containsKey(c) && mapS.get(c).intValue() == mapT.get(c).intValue()) {
+                cr++;
+            }
+            while (left <= right && re == cr) {
+                c = s.charAt(left);
+                if (ans[0] == -1 || ans[0] > right - left + 1) {
+                    ans[0] = right - left + 1;
+                    ans[1] = left;
+                    ans[2] = right;
+                }
+                mapS.put(c, mapS.get(c) - 1);
+                if (mapT.containsKey(c) && mapS.get(c).intValue() < mapT.get(c).intValue()) {
+                    cr--;
+                }
+                left++;
+            }
+            right++;
+        }
+        if (ans[0] == -1) {
+            return "";
+        }
+        return s.substring(ans[1], ans[2] + 1);
+    }
+}

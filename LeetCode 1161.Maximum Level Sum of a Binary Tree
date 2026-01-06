@@ -1,0 +1,106 @@
+ # 🧮 Maximum Level Sum of a Binary Tree
+
+## 📝 Problem Statement
+Given the root of a binary tree, the level of its root is 1, the level of its children is 2, and so on.
+Return the smallest level x such that the sum of all the values of nodes at level x is maximal.
+---
+## 📌 Example
+**Input:**  
+root = [1,7,0,7,-8,null,null]
+**Output:**  
+2
+**Explanation:** 
+Level 1 sum = 1.
+Level 2 sum = 7 + 0 = 7.
+Level 3 sum = 7 + -8 = -1.
+So we return the level with the maximum sum which is level 2
+---
+
+## 💡 Approach
+1. If the root is null, return 0.
+
+2. Use a queue to perform level-order traversal (BFS).
+
+3. Initialize:
+
+   - level to track current depth
+
+   - max to store the maximum level sum
+
+   - ans to store the level number with the maximum sum
+
+4. While the queue is not empty:
+
+   - Increment the level counter
+
+   - Process all nodes currently in the queue (one full level)
+
+   - Add their values to sum
+
+   - Push their left and right children (if any) into the queue
+
+5. After processing each level:
+
+   - If the current sum is greater than max, update max and ans
+
+6. Return ans.
+---
+## ⏱ Time Complexity
+O(N)
+   - Each node is visited exactly once.
+## 💾 Space Complexity
+O(N)
+   - In the worst case, the queue stores all nodes of the largest level.
+
+---
+
+## 🧑‍💻 Java Code
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int maxLevelSum(TreeNode root) {
+        if(root == null){
+            return 0;
+        }
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        int max = Integer.MIN_VALUE;
+        int level = 0;
+        int ans = 0;
+        while(!q.isEmpty()){
+            level++;
+            int size = q.size();
+            int sum = 0;
+            for(int i=0;i<size;i++){
+                 TreeNode temp = q.poll();
+                 sum += temp.val;
+                 if(temp.left != null){
+                    q.offer(temp.left);
+                 }
+                 if(temp.right != null){
+                    q.offer(temp.right);
+                 }
+            }
+            if(sum > max){
+                max = sum;
+                ans = level;
+            }
+        }
+        return ans;
+    }
+}

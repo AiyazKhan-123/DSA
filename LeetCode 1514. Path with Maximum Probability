@@ -1,0 +1,134 @@
+# 🧮 Path with Maximum Probability
+
+## 📝 Problem Statement
+You are given an undirected weighted graph of n nodes (0-indexed), represented by an edge list where edges[i] = [a, b] is an undirected edge connecting the nodes a and b with a probability of success of traversing that edge succProb[i].
+Given two nodes start and end, find the path with the maximum probability of success to go from start to end and return its success probability.
+If there is no path from start to end, return 0. Your answer will be accepted if it differs from the correct answer by at most 1e-5.
+---
+## 📌 Example
+**Input:** 
+n = 3, edges = [[0,1],[1,2],[0,2]], succProb = [0.5,0.5,0.2], start = 0, end = 2
+**Output:**  
+0.25000
+**Explanation:**  
+here are two paths from start to end, one having a probability of success = 0.2 and the other has 0.5 * 0.5 = 0.25.
+---
+
+## 💡 Approach
+1. Build an adjacency list
+
+   - Since the graph is undirected, add edges both ways.
+
+   - Each edge stores neighbor and success probability.
+
+2. Use a max heap (PriorityQueue)
+
+   - Store (node, probability_so_far)
+
+   - Always process the node with the highest probability first.
+
+3. Maintain a dist[] array
+
+   - dist[i] stores the maximum probability to reach node i.
+
+   - Initialize all to 0.0
+
+   - Set dist[start_node] = 1.0
+
+4. Dijkstra Process
+
+   - Pop the node with highest probability.
+
+   - If it is the destination → return the probability.
+
+   - For each neighbor:
+
+          - Compute newProb = currentProb * edgeProb
+
+          - If newProb > dist[neighbor], update and push to heap.
+
+5. If destination is unreachable, return 0.0.
+---
+## ⏱ Time Complexity
+    - O(ElogV)
+
+## 💾 Space Complexity
+    - O(V+E)
+
+---
+
+## 🧑‍💻 Java Code
+
+```java
+import java.util.*;
+
+class Solution {
+    public double maxProbability(int n, int[][] edges, double[] succProb,
+                                 int start_node, int end_node) {
+
+        ArrayList<ArrayList<Edge>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+       
+        for (int i = 0; i < edges.length; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            double p = succProb[i];
+
+            adj.get(u).add(new Edge(v, p));
+            adj.get(v).add(new Edge(u, p));
+        }
+
+        double[] dist = new double[n];
+        Arrays.fill(dist, 0.0);
+
+        PriorityQueue<Path> pq = new PriorityQueue<>(
+            (a, b) -> Double.compare(b.cost, a.cost)
+        );
+
+        pq.offer(new Path(start_node, 1.0));
+        dist[start_node] = 1.0;
+
+        while (!pq.isEmpty()) {
+            Path curr = pq.poll();
+            int u = curr.vertex;
+            double prob = curr.cost;
+
+            if (u == end_node) return prob;
+
+            if (prob < dist[u]) continue;
+
+            for (Edge e : adj.get(u)) {
+                int v = e.neigh;
+                double newProb = prob * e.wt;
+
+                if (newProb > dist[v]) {
+                    dist[v] = newProb;
+                    pq.offer(new Path(v, newProb));
+                }
+            }
+        }
+
+        return 0.0;
+    }
+}
+
+class Path {
+    int vertex;
+    double cost;
+    public Path(int vertex, double cost) {
+        this.vertex = vertex;
+        this.cost = cost;
+    }
+}
+
+class Edge {
+    int neigh;
+    double wt;
+    public Edge(int neigh, double wt) {
+        this.neigh = neigh;
+        this.wt = wt;
+    }
+}
